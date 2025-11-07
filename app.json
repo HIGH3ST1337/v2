@@ -12,12 +12,16 @@
   "repository": "https://github.com/spree/spree_starter",
   "env": {
     "ADMIN_EMAIL": {
-      "description": "We will create an admin user with this email.",
-      "value": "spree@example.com"
+      "description": "Email address for the admin user (REQUIRED - must be unique and valid)",
+      "required": true
     },
     "ADMIN_PASSWORD": {
-      "description": "We will create an admin user with this password.",
-      "value": "spree123"
+      "description": "Secure password for the admin user (REQUIRED - minimum 6 characters)",
+      "required": true
+    },
+    "APP_HOST": {
+      "description": "Your application domain without protocol (e.g., mystore.com or shop.example.com). REQUIRED to prevent localhost URLs in production.",
+      "required": true
     },
     "SECRET_KEY_BASE": {
       "description": "A secret key for verifying the integrity of signed cookies.",

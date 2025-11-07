@@ -2,7 +2,19 @@
 
 # This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
 # docker build -t my-app .
-# docker run -d -p 80:80 -p 443:443 --name my-app -e SECRET_KEY_BASE=<value> my-app
+# docker run -d -p 80:80 -p 443:443 --name my-app \
+#   -e SECRET_KEY_BASE=<value> \
+#   -e ADMIN_EMAIL=<admin-email> \
+#   -e ADMIN_PASSWORD=<secure-password> \
+#   -e APP_HOST=<your-domain.com> \
+#   my-app
+#
+# REQUIRED ENVIRONMENT VARIABLES:
+# - SECRET_KEY_BASE: Secret key for verifying the integrity of signed cookies
+# - ADMIN_EMAIL: Email address for the admin user (will be created on first run)
+# - ADMIN_PASSWORD: Password for the admin user (minimum 6 characters)
+# - APP_HOST: Your application's domain (e.g., mystore.com or shop.example.com)
+#             This is critical - without it, product links will point to localhost!
 
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
 ARG RUBY_VERSION=3.3.0

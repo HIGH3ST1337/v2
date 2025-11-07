@@ -2,7 +2,39 @@
 
 # If running the rails server then create or migrate existing database
 if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
-  AUTO_ACCEPT=1 ./bin/rails db:prepare
+  # Validate that required environment variables are provided
+  MISSING_VARS=()
+
+  if [ -z "$ADMIN_EMAIL" ]; then
+    MISSING_VARS+=("ADMIN_EMAIL")
+  fi
+
+  if [ -z "$ADMIN_PASSWORD" ]; then
+    MISSING_VARS+=("ADMIN_PASSWORD")
+  fi
+
+  if [ -z "$APP_HOST" ] && [ -z "$RENDER_EXTERNAL_URL" ]; then
+    MISSING_VARS+=("APP_HOST")
+  fi
+
+  if [ ${#MISSING_VARS[@]} -gt 0 ]; then
+    echo "ERROR: Required environment variables are missing: ${MISSING_VARS[*]}"
+    echo ""
+    echo "Required variables:"
+    echo "  - ADMIN_EMAIL: Email for the admin user"
+    echo "  - ADMIN_PASSWORD: Secure password for the admin user"
+    echo "  - APP_HOST: Your application domain (e.g., mystore.com)"
+    echo ""
+    echo "Example:"
+    echo "  docker run -e ADMIN_EMAIL=admin@mystore.com \\"
+    echo "             -e ADMIN_PASSWORD=securepassword \\"
+    echo "             -e APP_HOST=mystore.com \\"
+    echo "             your-image"
+    exit 1
+  fi
+
+  # Run database setup with environment variables (do NOT use AUTO_ACCEPT)
+  ./bin/rails db:prepare
 fi
 
 exec "${@}"

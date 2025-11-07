@@ -69,7 +69,11 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # Set host to be used by links generated in mailer templates.
-  # config.action_mailer.default_url_options = { host: "example.com" }
+  if ENV['APP_HOST'].present?
+    config.action_mailer.default_url_options = { host: ENV['APP_HOST'] }
+  elsif ENV['RENDER_EXTERNAL_URL'].present?
+    config.action_mailer.default_url_options = { host: ENV['RENDER_EXTERNAL_URL'] }
+  end
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   if ENV['SENDGRID_API_KEY'].present?
@@ -103,9 +107,15 @@ Rails.application.configure do
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
 
-  # Fix for Render deployment
-  # this will set the store URL to the render external URL during db:seeds for the first time
-  if ENV['RENDER_EXTERNAL_URL'].present?
+  # Set the application host for URL generation (storefront links, emails, etc.)
+  # This is REQUIRED in production to prevent localhost URLs
+  if ENV['APP_HOST'].present?
+    Rails.application.routes.default_url_options[:host] = ENV['APP_HOST']
+  elsif ENV['RENDER_EXTERNAL_URL'].present?
+    # Backward compatibility for Render deployments
     Rails.application.routes.default_url_options[:host] = ENV['RENDER_EXTERNAL_URL']
+  else
+    # Fallback warning - application will use request.host which may cause issues
+    Rails.logger.warn "WARNING: APP_HOST environment variable not set. URLs may not generate correctly."
   end
 end

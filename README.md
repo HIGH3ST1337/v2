@@ -29,7 +29,47 @@ Please follow [Spree Quickstart guide](https://spreecommerce.org/docs/developer/
 
 ## Deployment
 
-Please follow [Deployment guide](https://spreecommerce.org/docs/developer/deployment/render) to quickly deploy your production-ready Spree application.
+### Railway Deployment
+
+For Railway deployment, see the **[Railway Template Configuration Guide](railway-template.md)** which includes:
+- Complete list of all environment variables
+- Required vs optional configuration
+- Payment gateway setup instructions
+- Post-deployment checklist
+- Scaling recommendations
+
+Quick start: Copy the environment variables from `railway-template.md` into your Railway project.
+
+### Other Platforms
+
+Please follow [Deployment guide](https://spreecommerce.org/docs/developer/deployment/render) to quickly deploy your production-ready Spree application to Render, Heroku, or other platforms.
+
+### Docker Deployment
+
+To deploy using Docker, you must provide the following required environment variables:
+
+```bash
+docker run -d -p 3000:3000 \
+  -e SECRET_KEY_BASE=your-secret-key \
+  -e ADMIN_EMAIL=admin@yourstore.com \
+  -e ADMIN_PASSWORD=your-secure-password \
+  -e APP_HOST=yourstore.com \
+  -e DATABASE_URL=postgresql://... \
+  -e REDIS_URL=redis://... \
+  your-spree-app
+```
+
+**Required Environment Variables:**
+
+- `ADMIN_EMAIL` - Email address for the admin user (will be created on first run)
+- `ADMIN_PASSWORD` - Secure password for the admin user (minimum 6 characters)
+- `APP_HOST` - Your application's domain name **without** protocol (e.g., `mystore.com` or `shop.example.com`)
+  - **Critical:** This prevents product links and other URLs from pointing to `localhost` in production
+- `SECRET_KEY_BASE` - Secret key for session security
+- `DATABASE_URL` - PostgreSQL connection string
+- `REDIS_URL` - Redis connection string
+
+**Security Notice:** The application will not start without these required environment variables. This ensures secure deployment with proper credentials and URL configuration.
 
 ## Customizing
 
