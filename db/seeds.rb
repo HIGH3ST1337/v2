@@ -8,4 +8,9 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+# Load Spree core seeds
 Spree::Core::Engine.load_seed if defined?(Spree::Core)
+
+# Update admin user with environment variable credentials
+# This runs after Spree seeds to ensure the admin user uses configured credentials
+load(Rails.root.join('db/seeds/update_admin.rb'))
