@@ -11,15 +11,16 @@ puts ""
 if ENV['ADMIN_EMAIL'].present? && ENV['ADMIN_PASSWORD'].present?
   puts "Configuring admin user..."
 
+  # IMPORTANT: Admins are stored in spree_admin_users table (Spree::AdminUser model)
+  # NOT in the regular spree_users table!
+
   # Find the primary admin user by checking:
   # 1. Default spree@example.com (from initial Spree setup)
   # 2. Current configured email from ENV
-  # 3. ANY user with admin role (handles email changes)
-  admin_role = Spree::Role.find_or_create_by!(name: 'admin')
-
-  admin_user = Spree::User.find_by(email: 'spree@example.com') ||
-               Spree::User.find_by(email: ENV['ADMIN_EMAIL']) ||
-               admin_role.users.first
+  # 3. ANY existing admin user (handles email changes)
+  admin_user = Spree::AdminUser.find_by(email: 'spree@example.com') ||
+               Spree::AdminUser.find_by(email: ENV['ADMIN_EMAIL']) ||
+               Spree::AdminUser.first
 
   if admin_user
     # Update existing admin user
@@ -43,24 +44,20 @@ if ENV['ADMIN_EMAIL'].present? && ENV['ADMIN_PASSWORD'].present?
       )
       puts "  ✓ Admin password updated"
     end
-
-    # Ensure admin role is assigned
-    admin_user.spree_roles << admin_role unless admin_user.spree_roles.include?(admin_role)
   else
     # Create new admin user (should only happen on very first deployment)
     puts "  No existing admin user found"
     puts "  Creating new admin user: #{ENV['ADMIN_EMAIL']}"
-    admin_user = Spree::User.create!(
+    admin_user = Spree::AdminUser.create!(
       email: ENV['ADMIN_EMAIL'],
       password: ENV['ADMIN_PASSWORD'],
       password_confirmation: ENV['ADMIN_PASSWORD']
     )
 
-    # Assign admin role
-    admin_user.spree_roles << admin_role
-
     puts "  ✓ Admin user created successfully"
   end
+
+  puts "========================================="
 else
   puts "❌ ERROR: ADMIN_EMAIL and/or ADMIN_PASSWORD not set!"
   puts "Admin user will remain as default: spree@example.com / spree123"
