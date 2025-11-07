@@ -35,14 +35,23 @@ if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
 
   # Display admin credentials being used (for debugging)
   echo "===================================="
-  echo "Creating admin user with:"
+  echo "Setting up database..."
+  echo "Admin credentials:"
   echo "  Email: $ADMIN_EMAIL"
   echo "  Password: [hidden]"
   echo "===================================="
 
-  # Run database setup with environment variables (do NOT use AUTO_ACCEPT)
-  # The spree_auth_devise gem will read ADMIN_EMAIL and ADMIN_PASSWORD during seeding
-  ./bin/rails db:prepare
+  # Run database migrations
+  ./bin/rails db:migrate
+
+  # Always run seed to ensure admin user is created/updated
+  # This runs on every deployment, not just first time
+  echo "Running database seed..."
+  ./bin/rails db:seed
+
+  echo "===================================="
+  echo "Database setup complete!"
+  echo "===================================="
 fi
 
 exec "${@}"

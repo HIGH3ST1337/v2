@@ -1,6 +1,13 @@
 # Update or create admin user with credentials from environment variables
 # This ensures the admin user uses the configured ADMIN_EMAIL and ADMIN_PASSWORD
 
+puts "========================================="
+puts "Admin User Configuration Script"
+puts "========================================="
+puts "ADMIN_EMAIL env var: #{ENV['ADMIN_EMAIL'].present? ? ENV['ADMIN_EMAIL'] : '[NOT SET]'}"
+puts "ADMIN_PASSWORD env var: #{ENV['ADMIN_PASSWORD'].present? ? '[SET]' : '[NOT SET]'}"
+puts ""
+
 if ENV['ADMIN_EMAIL'].present? && ENV['ADMIN_PASSWORD'].present?
   puts "Configuring admin user..."
 
@@ -55,5 +62,13 @@ if ENV['ADMIN_EMAIL'].present? && ENV['ADMIN_PASSWORD'].present?
     puts "  ✓ Admin user created successfully"
   end
 else
-  puts "Warning: ADMIN_EMAIL and ADMIN_PASSWORD not set. Skipping admin user configuration."
+  puts "❌ ERROR: ADMIN_EMAIL and/or ADMIN_PASSWORD not set!"
+  puts "Admin user will remain as default: spree@example.com / spree123"
+  puts ""
+  puts "To fix this, set these environment variables in Railway:"
+  puts "  - ADMIN_EMAIL=your-email@example.com"
+  puts "  - ADMIN_PASSWORD=your-secure-password"
+  puts ""
+  puts "Then redeploy to update the admin user."
+  puts "========================================="
 end
