@@ -1865,11 +1865,7 @@ header button#wishlist-icon {
   visibility: hidden !important;
 }
 
-/* Hide search button - target first child div that contains search */
-header nav .page-container > .flex > div:first-child:not(:has(button[data-action*="account"])):not(:has(button[data-action*="slideover-account"])) {
-  display: none !important;
-  visibility: hidden !important;
-}
+/* Hide search button - will be handled by JavaScript to avoid hiding account button */
 
 /* Reposition the main header container */
 header nav .page-container > .flex.items-center,
