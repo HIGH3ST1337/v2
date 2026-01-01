@@ -1854,52 +1854,67 @@ body:has(.currency-and-locale-modal:not(.hidden)) .page-contents {
 /* ============================================
    Header Customization
    Remove search and heart buttons, reposition account and cart icons
-   
-   NOTE: If these styles don't work, please inspect the HTML 
-   to get the exact class names and update the selectors accordingly
    ============================================ */
 
-/* Hide search button - target by href pattern */
-header nav a[href*="/search"],
-header nav a[href*="search"],
-header nav button[data-action*="search"],
-header nav [data-controller*="search"] {
+/* Hide search button - very broad selectors */
+header nav a[href*="search" i],
+header nav a[href*="/search" i],
+header nav button[data-action*="search" i],
+header nav [data-controller*="search" i],
+header nav a:first-child:not([href*="/account"]):not([href*="/cart"]):not([href*="/wishlist"]),
+header nav .flex > a:first-child,
+header nav .flex > div:first-child > a,
+/* Target by text content pattern - if href contains search */
+header nav a[href*="search"] {
   display: none !important;
+  visibility: hidden !important;
 }
 
-/* Hide wishlist/favorite/heart button */
-header nav a[href*="/wishlist"],
-header nav a[href*="wishlist"],
-header nav a[href*="/favorites"],
-header nav a[href*="favorites"],
-header nav button[data-action*="wishlist"],
-header nav button[data-action*="favorite"],
-header nav [data-controller*="wishlist"],
-header nav [data-controller*="favorite"] {
+/* Hide wishlist/favorite/heart button - target middle button in icon group */
+header nav a[href*="wishlist" i],
+header nav a[href*="/wishlist" i],
+header nav a[href*="favorites" i],
+header nav a[href*="/favorites" i],
+header nav button[data-action*="wishlist" i],
+header nav button[data-action*="favorite" i],
+header nav [data-controller*="wishlist" i],
+header nav [data-controller*="favorite" i],
+header nav .flex > a:nth-child(2),
+header nav .flex > div:nth-child(2) > a {
   display: none !important;
+  visibility: hidden !important;
 }
 
-/* Reposition header actions container */
+/* Reposition header actions container - make it space-between */
 header nav .page-container > .flex,
-header nav .flex.items-center {
+header nav .flex.items-center,
+header nav .flex,
+header nav > div > div.flex {
   display: flex !important;
   justify-content: space-between !important;
   width: 100% !important;
+  align-items: center !important;
 }
 
 /* Position account icon on the left */
-header nav a[href*="/account"],
-header nav a[href*="/user"],
-header nav button[data-action*="account"],
-header nav [data-controller*="account"] {
+header nav a[href*="/account" i],
+header nav a[href*="/user" i],
+header nav a[href*="account" i],
+header nav button[data-action*="account" i],
+header nav [data-controller*="account" i],
+header nav .flex > a[href*="/account"],
+header nav .flex > a[href*="/user"] {
   order: -1 !important;
   margin-right: auto !important;
 }
 
 /* Position cart icon on the right */
-header nav a[href*="/cart"],
-header nav button[data-action*="cart"],
-header nav [data-controller*="cart"] {
+header nav a[href*="/cart" i],
+header nav a[href*="cart" i],
+header nav button[data-action*="cart" i],
+header nav [data-controller*="cart" i],
+header nav .flex > a[href*="/cart"],
+header nav .flex > a:last-child:not([href*="/account"]) {
   order: 999 !important;
   margin-left: auto !important;
 }
