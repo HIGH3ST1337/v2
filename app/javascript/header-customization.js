@@ -80,7 +80,7 @@
       if (accountContainer && accountContainer !== mainContainer) {
         // Override hidden class to show on mobile
         accountContainer.classList.remove('hidden');
-        accountContainer.style.cssText = 'display: flex !important; visibility: visible !important; position: absolute !important; left: 0 !important; z-index: 10 !important;';
+        accountContainer.style.cssText = 'display: flex !important; visibility: visible !important; position: absolute !important; left: 0 !important; z-index: 10 !important; align-items: center !important; align-self: center !important;';
         console.log('Moved account container to left and made visible on mobile');
       }
     }
@@ -96,7 +96,7 @@
       }
       
       if (cartContainer && cartContainer !== mainContainer) {
-        cartContainer.style.cssText = 'position: absolute !important; right: 0 !important; z-index: 10 !important;';
+        cartContainer.style.cssText = 'position: absolute !important; right: 0 !important; z-index: 10 !important; align-items: center !important; align-self: center !important;';
         console.log('Moved cart container to right');
       }
     }
