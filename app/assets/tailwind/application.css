@@ -1853,7 +1853,7 @@ body:has(.currency-and-locale-modal:not(.hidden)) .page-contents {
 
 /* ============================================
    Header Customization
-   Remove search and heart buttons, reposition account and cart icons
+   Remove search and heart buttons, reposition account to left of logo, cart to right
    ============================================ */
 
 /* Hide wishlist/favorite/heart button - target the form containing it */
@@ -1865,21 +1865,10 @@ header button#wishlist-icon {
   visibility: hidden !important;
 }
 
-/* Hide search button - very aggressive targeting */
-header button[data-action*="search"],
-header [data-controller*="search"],
-header button[data-toggle*="search"],
-header a[href*="search"],
-header nav .flex > a:first-child,
-header nav .flex > div:first-child,
-header nav .flex > div:first-child > a,
-header nav .flex > div:first-child > button {
+/* Hide search button - target first child div that contains search */
+header nav .page-container > .flex > div:first-child:not(:has(button[data-action*="account"])):not(:has(button[data-action*="slideover-account"])) {
   display: none !important;
   visibility: hidden !important;
-  opacity: 0 !important;
-  width: 0 !important;
-  height: 0 !important;
-  overflow: hidden !important;
 }
 
 /* Reposition the main header container */
@@ -1891,12 +1880,20 @@ header nav .page-container > .flex {
   align-items: center !important;
 }
 
-/* Move account button to the left side (before logo) */
+/* Show and position account button on the left */
 header button[data-action*="slideover-account"],
-header button[data-action*="account"],
-header [data-controller*="account"] button {
+header button[data-action*="account"]:not([data-action*="search"]):not([data-action*="wishlist"]) {
+  display: flex !important;
+  visibility: visible !important;
   order: -1 !important;
   margin-right: auto !important;
+}
+
+/* Ensure account button container is visible and positioned */
+header .flex.items-center.gap-4.flex-1.justify-end button[data-action*="slideover-account"],
+header .flex.items-center.gap-4.flex-1 button[data-action*="slideover-account"] {
+  display: flex !important;
+  visibility: visible !important;
 }
 
 /* Keep cart icon on the right */
@@ -1907,9 +1904,10 @@ header [data-controller*="cart"] button {
   margin-left: auto !important;
 }
 
-/* Ensure logo stays centered */
+/* Ensure logo/nav stays centered */
 header nav .flex.items-center.flex-col.header-nav-container,
 header nav .flex-centered {
   order: 0 !important;
   flex: 0 1 auto !important;
+  margin: 0 auto !important;
 }
