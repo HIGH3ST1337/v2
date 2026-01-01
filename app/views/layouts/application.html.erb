@@ -12,5 +12,129 @@
 
   <body>
     <%= yield %>
+    <script>
+      // Header customization - removes search and favorites, repositions account and cart
+      (function() {
+        function customizeHeader() {
+          console.log('Customizing header...');
+          const header = document.querySelector('header nav') || document.querySelector('header');
+          if (!header) {
+            console.log('Header not found');
+            return;
+          }
+
+          // Find all links and buttons in the header
+          const links = Array.from(header.querySelectorAll('a, button'));
+          console.log('Found links:', links.length);
+
+          links.forEach((link, index) => {
+            const href = (link.href || '').toLowerCase();
+            const text = link.textContent.trim().toUpperCase();
+            const ariaLabel = (link.getAttribute('aria-label') || '').toLowerCase();
+            const className = (link.className || '').toLowerCase();
+            
+            console.log(`Link ${index}:`, { href, text, ariaLabel, className });
+
+            // Hide search button
+            if (href.includes('search') || text.includes('SEARCH') || 
+                ariaLabel.includes('search') || className.includes('search')) {
+              console.log('Hiding search button');
+              link.style.display = 'none';
+              link.style.visibility = 'hidden';
+              link.setAttribute('hidden', 'hidden');
+            }
+            
+            // Hide wishlist/favorite/heart button
+            if (href.includes('wishlist') || href.includes('favorite') || 
+                text.includes('WISHLIST') || text.includes('FAVORITE') || text.includes('HEART') ||
+                ariaLabel.includes('wishlist') || ariaLabel.includes('favorite') || 
+                ariaLabel.includes('heart') || className.includes('wishlist') || 
+                className.includes('favorite')) {
+              console.log('Hiding wishlist button');
+              link.style.display = 'none';
+              link.style.visibility = 'hidden';
+              link.setAttribute('hidden', 'hidden');
+            }
+          });
+
+          // Find account and cart links
+          const accountLink = links.find(link => {
+            const href = (link.href || '').toLowerCase();
+            const ariaLabel = (link.getAttribute('aria-label') || '').toLowerCase();
+            const text = link.textContent.trim().toLowerCase();
+            return (href.includes('/account') || href.includes('/user') || 
+                   href.includes('/login') || ariaLabel.includes('account') || 
+                   ariaLabel.includes('user') || ariaLabel.includes('login') ||
+                   text.includes('account') || text.includes('login')) &&
+                   !link.hasAttribute('hidden') && link.style.display !== 'none';
+          });
+
+          const cartLink = links.find(link => {
+            const href = (link.href || '').toLowerCase();
+            const ariaLabel = (link.getAttribute('aria-label') || '').toLowerCase();
+            const text = link.textContent.trim().toLowerCase();
+            return (href.includes('/cart') || href.includes('/bag') || 
+                   ariaLabel.includes('cart') || ariaLabel.includes('bag') ||
+                   text.includes('cart') || text.includes('bag')) &&
+                   !link.hasAttribute('hidden') && link.style.display !== 'none';
+          });
+
+          console.log('Account link:', accountLink);
+          console.log('Cart link:', cartLink);
+
+          // Reposition account and cart
+          if (accountLink && cartLink) {
+            let container = accountLink.parentElement;
+            
+            // Find common flex container
+            while (container && container !== document.body) {
+              if (container.contains(cartLink)) {
+                break;
+              }
+              container = container.parentElement;
+            }
+            
+            if (!container || container === document.body) {
+              const flexContainers = header.querySelectorAll('.flex, [class*="flex"], .page-container > div, nav > div');
+              container = Array.from(flexContainers).find(el => 
+                el.contains(accountLink) && el.contains(cartLink)
+              ) || accountLink.parentElement;
+            }
+
+            if (container) {
+              console.log('Repositioning in container:', container);
+              container.style.display = 'flex';
+              container.style.justifyContent = 'space-between';
+              container.style.width = '100%';
+              container.style.alignItems = 'center';
+              
+              accountLink.style.order = '-1';
+              accountLink.style.marginRight = 'auto';
+              
+              cartLink.style.order = '999';
+              cartLink.style.marginLeft = 'auto';
+            }
+          }
+        }
+
+        // Run immediately and on various events
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', customizeHeader);
+        } else {
+          customizeHeader();
+        }
+
+        // Also run after a delay to catch late-loading elements
+        setTimeout(customizeHeader, 100);
+        setTimeout(customizeHeader, 500);
+        setTimeout(customizeHeader, 1000);
+
+        // Turbo events
+        if (typeof Turbo !== 'undefined') {
+          document.addEventListener('turbo:load', customizeHeader);
+          document.addEventListener('turbo:frame-load', customizeHeader);
+        }
+      })();
+    </script>
   </body>
 </html>
