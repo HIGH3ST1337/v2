@@ -13,49 +13,76 @@
   <body>
     <%= yield %>
       <script>
-        // Header customization - removes search and favorites, repositions account and cart
+        // Header customization - removes search, repositions account to left of logo
         (function() {
           function customizeHeader() {
             // Hide wishlist form
             const wishlistForm = document.querySelector('header form[action="/account/wishlist"], header form[action*="/wishlist"]');
             if (wishlistForm) {
-              wishlistForm.style.display = 'none';
-              wishlistForm.style.visibility = 'hidden';
+              wishlistForm.style.cssText = 'display: none !important; visibility: hidden !important;';
             }
             
             // Hide wishlist button by ID
             const wishlistButton = document.querySelector('header #wishlist-icon');
             if (wishlistButton) {
-              wishlistButton.style.display = 'none';
-              wishlistButton.style.visibility = 'hidden';
+              wishlistButton.style.cssText = 'display: none !important; visibility: hidden !important;';
             }
 
-            // Hide search button - look for button with search in data-action
-            const searchButtons = document.querySelectorAll('header button[data-action*="search"], header [data-controller*="search"]');
+            // Hide search button - multiple strategies
+            const searchButtons = document.querySelectorAll('header button[data-action*="search"], header [data-controller*="search"], header button[data-toggle*="search"]');
             searchButtons.forEach(btn => {
-              btn.style.display = 'none';
-              btn.style.visibility = 'hidden';
+              btn.style.cssText = 'display: none !important; visibility: hidden !important;';
             });
 
-            // Find the container that holds account and cart
-            const container = document.querySelector('header .flex.items-center.gap-4.flex-1.justify-end');
-            if (container) {
-              container.style.display = 'flex';
-              container.style.justifyContent = 'space-between';
-              container.style.width = '100%';
+            // Hide search link/text - find elements containing "SEARCH" text
+            const allElements = document.querySelectorAll('header nav *');
+            allElements.forEach(el => {
+              const text = el.textContent.trim().toUpperCase();
+              if (text === 'SEARCH' || (text.includes('SEARCH') && el.tagName === 'A')) {
+                el.style.cssText = 'display: none !important; visibility: hidden !important;';
+                // Also hide parent if it only contains search
+                if (el.parentElement) {
+                  const siblings = Array.from(el.parentElement.children).filter(child => 
+                    child.style.display !== 'none' && !child.hasAttribute('hidden')
+                  );
+                  if (siblings.length <= 1) {
+                    el.parentElement.style.cssText = 'display: none !important; visibility: hidden !important;';
+                  }
+                }
+              }
+            });
+
+            // Find the main header container
+            const mainContainer = document.querySelector('header nav .page-container > .flex.items-center, header nav .page-container > .flex');
+            if (mainContainer) {
+              mainContainer.style.cssText = 'display: flex !important; justify-content: space-between !important; width: 100% !important; align-items: center !important;';
               
-              // Find account button
-              const accountButton = container.querySelector('button[data-action*="slideover-account"]');
+              // Find account button anywhere in header
+              const accountButton = document.querySelector('header button[data-action*="slideover-account"], header button[data-action*="account"]');
               if (accountButton) {
-                accountButton.style.order = '-1';
-                accountButton.style.marginRight = 'auto';
+                // Move account button to the left (before logo)
+                accountButton.style.cssText = 'order: -1 !important; margin-right: auto !important;';
+                // If it's in a container, move the container
+                const accountContainer = accountButton.closest('.flex.items-center.gap-4');
+                if (accountContainer && accountContainer !== mainContainer) {
+                  accountContainer.style.cssText = 'order: -1 !important; margin-right: auto !important;';
+                }
               }
               
-              // Find cart button
-              const cartButton = container.querySelector('button[data-action*="cart"]');
+              // Find cart button and keep it on the right
+              const cartButton = document.querySelector('header button[data-action*="cart"], header button[data-action*="slideover-cart"]');
               if (cartButton) {
-                cartButton.style.order = '999';
-                cartButton.style.marginLeft = 'auto';
+                cartButton.style.cssText = 'order: 999 !important; margin-left: auto !important;';
+                const cartContainer = cartButton.closest('.flex.items-center.gap-4');
+                if (cartContainer && cartContainer !== mainContainer) {
+                  cartContainer.style.cssText = 'order: 999 !important; margin-left: auto !important;';
+                }
+              }
+              
+              // Ensure logo/nav stays centered
+              const logoContainer = mainContainer.querySelector('.flex.items-center.flex-col.header-nav-container, .flex-centered');
+              if (logoContainer) {
+                logoContainer.style.cssText = 'order: 0 !important; flex: 0 1 auto !important;';
               }
             }
           }
@@ -71,6 +98,7 @@
           setTimeout(customizeHeader, 100);
           setTimeout(customizeHeader, 500);
           setTimeout(customizeHeader, 1000);
+          setTimeout(customizeHeader, 2000);
 
           // Turbo events
           if (typeof Turbo !== 'undefined') {

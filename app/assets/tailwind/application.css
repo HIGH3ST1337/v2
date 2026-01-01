@@ -1865,24 +1865,33 @@ header button#wishlist-icon {
   visibility: hidden !important;
 }
 
-/* Hide search button - target by data-action or controller */
+/* Hide search button - very aggressive targeting */
 header button[data-action*="search"],
 header [data-controller*="search"],
-header button[data-toggle*="search"] {
+header button[data-toggle*="search"],
+header a[href*="search"],
+header nav .flex > a:first-child,
+header nav .flex > div:first-child,
+header nav .flex > div:first-child > a,
+header nav .flex > div:first-child > button {
   display: none !important;
   visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
 }
 
-/* Reposition the container that holds account and cart icons */
-header .flex.items-center.gap-4.flex-1.justify-end,
-header nav .flex.items-center.gap-4.flex-1.justify-end {
+/* Reposition the main header container */
+header nav .page-container > .flex.items-center,
+header nav .page-container > .flex {
   display: flex !important;
   justify-content: space-between !important;
   width: 100% !important;
   align-items: center !important;
 }
 
-/* Position account icon on the left */
+/* Move account button to the left side (before logo) */
 header button[data-action*="slideover-account"],
 header button[data-action*="account"],
 header [data-controller*="account"] button {
@@ -1890,10 +1899,17 @@ header [data-controller*="account"] button {
   margin-right: auto !important;
 }
 
-/* Position cart icon on the right */
+/* Keep cart icon on the right */
 header button[data-action*="cart"],
 header button[data-action*="slideover-cart"],
 header [data-controller*="cart"] button {
   order: 999 !important;
   margin-left: auto !important;
+}
+
+/* Ensure logo stays centered */
+header nav .flex.items-center.flex-col.header-nav-container,
+header nav .flex-centered {
+  order: 0 !important;
+  flex: 0 1 auto !important;
 }
