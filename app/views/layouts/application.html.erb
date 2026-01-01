@@ -37,7 +37,7 @@
               return;
             }
 
-            // Hide search - find first child that contains SEARCH text but not account button
+            // Hide search - hide first child of main container (this is the search button container)
             const firstChild = mainContainer.children[0];
             if (firstChild) {
               const firstChildText = firstChild.textContent.trim().toUpperCase();
@@ -46,22 +46,30 @@
               
               console.log('First child:', { text: firstChildText, hasSearch, hasAccount });
               
+              // Hide first child if it has search but NOT account button
               if (hasSearch && !hasAccount) {
-                firstChild.style.cssText = 'display: none !important; visibility: hidden !important;';
-                console.log('Hiding search container');
+                firstChild.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; width: 0 !important; height: 0 !important; overflow: hidden !important;';
+                console.log('Hiding search container (first child)');
               }
             }
             
-            // Hide any search buttons/links
-            const allElements = mainContainer.querySelectorAll('a, button');
+            // Hide any search buttons/links anywhere in header
+            const allElements = mainContainer.querySelectorAll('a, button, div');
             allElements.forEach(el => {
               const text = el.textContent.trim().toUpperCase();
               const dataAction = el.getAttribute('data-action') || '';
               
-              if (text.includes('SEARCH') || dataAction.includes('search')) {
-                if (!dataAction.includes('account')) {
+              // Check if element contains SEARCH text or has search-related attributes
+              if (text === 'SEARCH' || (text.includes('SEARCH') && el.tagName === 'A')) {
+                if (!el.closest('button[data-action*="slideover-account"]')) {
                   el.style.cssText = 'display: none !important; visibility: hidden !important;';
+                  console.log('Hiding search element:', el);
                 }
+              }
+              
+              if (dataAction.includes('search') && !dataAction.includes('account')) {
+                el.style.cssText = 'display: none !important; visibility: hidden !important;';
+                console.log('Hiding search button by data-action');
               }
             });
 

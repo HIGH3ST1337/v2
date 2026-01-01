@@ -1865,7 +1865,12 @@ header button#wishlist-icon {
   visibility: hidden !important;
 }
 
-/* Hide search button - JavaScript will handle this more precisely */
+/* Hide search button - target first child of flex container that contains search */
+header nav .page-container > .flex.items-center > div:first-child,
+header nav .page-container > .flex > div:first-child {
+  display: none !important;
+  visibility: hidden !important;
+}
 
 /* Hide any links/buttons with search text or search-related attributes */
 header nav a[href*="search"],
