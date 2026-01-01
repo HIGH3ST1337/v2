@@ -1850,3 +1850,77 @@ body:has(.currency-and-locale-modal:not(.hidden)) .page-contents {
     aspect-ratio: 1.77;
   }
 }
+
+/* ============================================
+   Header Customization
+   Remove search and heart buttons, reposition account and cart icons
+   ============================================ */
+
+/* Hide search button */
+header [data-action="search"],
+header [data-controller*="search"],
+header .action-search,
+header a[href*="/search"],
+header button[aria-label*="Search" i],
+header [data-toggle*="search"],
+header .btn-icon[href*="search"],
+header .header-icon[href*="search"],
+header a[href*="search"] {
+  display: none !important;
+}
+
+/* Hide wishlist/favorite/heart button */
+header [data-action="wishlist"],
+header [data-action="favorite"],
+header [data-controller*="wishlist"],
+header [data-controller*="favorite"],
+header .action-wishlist,
+header .action-favorite,
+header a[href*="/wishlist"],
+header a[href*="/favorites"],
+header button[aria-label*="Wishlist" i],
+header button[aria-label*="Favorite" i],
+header [data-toggle*="wishlist"],
+header [data-toggle*="favorite"],
+header .btn-icon[href*="wishlist"],
+header .btn-icon[href*="favorite"],
+header .header-icon[href*="wishlist"],
+header .header-icon[href*="favorite"] {
+  display: none !important;
+}
+
+/* Reposition header actions container to space account and cart apart */
+header nav .page-container > .flex,
+header .header-actions,
+header [class*="header-actions"],
+header [class*="header-icons"],
+header nav .flex.items-center,
+header nav .flex.justify-between {
+  display: flex !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
+/* Position account icon on the left */
+header [data-action="account"],
+header .action-account,
+header a[href*="/account"]:not([href*="/cart"]),
+header button[aria-label*="Account" i],
+header [data-toggle*="account"],
+header .btn-icon[href*="/account"],
+header .header-icon[href*="/account"] {
+  order: -1 !important;
+  margin-right: auto !important;
+}
+
+/* Position cart icon on the right */
+header [data-action="cart"],
+header .action-cart,
+header a[href*="/cart"],
+header button[aria-label*="Cart" i],
+header [data-toggle*="cart"],
+header .btn-icon[href*="/cart"],
+header .header-icon[href*="/cart"] {
+  order: 999 !important;
+  margin-left: auto !important;
+}
