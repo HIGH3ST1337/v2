@@ -16,6 +16,8 @@
         // Header customization - removes search, repositions account to left of logo
         (function() {
           function customizeHeader() {
+            console.log('Running header customization...');
+            
             // Hide wishlist form
             const wishlistForm = document.querySelector('header form[action="/account/wishlist"], header form[action*="/wishlist"]');
             if (wishlistForm) {
@@ -28,77 +30,97 @@
               wishlistButton.style.cssText = 'display: none !important; visibility: hidden !important;';
             }
 
-            // Hide search button - find the first div in the flex container that contains search
+            // Find the main header container
             const mainContainer = document.querySelector('header nav .page-container > .flex.items-center, header nav .page-container > .flex');
-            if (mainContainer) {
-              const firstChild = mainContainer.children[0];
-              if (firstChild) {
-                const hasSearch = firstChild.textContent.trim().toUpperCase().includes('SEARCH') || 
-                                 firstChild.querySelector('button[data-action*="search"]') ||
-                                 firstChild.querySelector('[data-controller*="search"]');
-                const hasAccount = firstChild.querySelector('button[data-action*="slideover-account"]') ||
-                                  firstChild.querySelector('button[data-action*="account"]');
-                
-                // Hide first child only if it has search but NOT account
-                if (hasSearch && !hasAccount) {
-                  firstChild.style.cssText = 'display: none !important; visibility: hidden !important;';
-                }
-              }
-              
-              // Also hide any buttons with search in data-action
-              const searchButtons = mainContainer.querySelectorAll('button[data-action*="search"], [data-controller*="search"]');
-              searchButtons.forEach(btn => {
-                const isAccount = btn.getAttribute('data-action') && btn.getAttribute('data-action').includes('account');
-                if (!isAccount) {
-                  btn.style.cssText = 'display: none !important; visibility: hidden !important;';
-                }
-              });
+            if (!mainContainer) {
+              console.log('Main container not found');
+              return;
             }
 
-            // Find the main header container
-            if (mainContainer) {
-              mainContainer.style.cssText = 'display: flex !important; justify-content: space-between !important; width: 100% !important; align-items: center !important;';
+            // Hide search - find first child that contains SEARCH text but not account button
+            const firstChild = mainContainer.children[0];
+            if (firstChild) {
+              const firstChildText = firstChild.textContent.trim().toUpperCase();
+              const hasSearch = firstChildText.includes('SEARCH');
+              const hasAccount = firstChild.querySelector('button[data-action*="slideover-account"]') !== null;
               
-              // Find account button - make sure it's visible and positioned on the left
-              const accountButton = document.querySelector('header button[data-action*="slideover-account"]');
-              if (accountButton) {
-                // Ensure account button is visible
-                accountButton.style.cssText = 'display: flex !important; visibility: visible !important; order: -1 !important; margin-right: auto !important;';
-                
-                // Move account button's container to the left
-                const accountContainer = accountButton.closest('.flex.items-center.gap-4, .flex.items-center');
-                if (accountContainer && accountContainer !== mainContainer) {
+              console.log('First child:', { text: firstChildText, hasSearch, hasAccount });
+              
+              if (hasSearch && !hasAccount) {
+                firstChild.style.cssText = 'display: none !important; visibility: hidden !important;';
+                console.log('Hiding search container');
+              }
+            }
+            
+            // Hide any search buttons/links
+            const allElements = mainContainer.querySelectorAll('a, button');
+            allElements.forEach(el => {
+              const text = el.textContent.trim().toUpperCase();
+              const dataAction = el.getAttribute('data-action') || '';
+              
+              if (text.includes('SEARCH') || dataAction.includes('search')) {
+                if (!dataAction.includes('account')) {
+                  el.style.cssText = 'display: none !important; visibility: hidden !important;';
+                }
+              }
+            });
+
+            // Setup flexbox layout
+            mainContainer.style.cssText = 'display: flex !important; justify-content: space-between !important; width: 100% !important; align-items: center !important;';
+            
+            // Find and position account button on the LEFT
+            const accountButton = document.querySelector('header button[data-action*="slideover-account"]');
+            if (accountButton) {
+              console.log('Found account button');
+              accountButton.style.cssText = 'display: flex !important; visibility: visible !important; order: -1 !important; margin-right: auto !important;';
+              
+              // Find account button's parent container and move it to the left
+              let accountContainer = accountButton.parentElement;
+              while (accountContainer && accountContainer !== mainContainer) {
+                if (accountContainer.classList.contains('flex') && accountContainer !== mainContainer) {
                   accountContainer.style.cssText = 'display: flex !important; visibility: visible !important; order: -1 !important; margin-right: auto !important;';
+                  console.log('Moved account container to left');
+                  break;
                 }
+                accountContainer = accountContainer.parentElement;
               }
+            } else {
+              console.log('Account button not found');
+            }
+            
+            // Find and position cart button on the RIGHT
+            const cartButton = document.querySelector('header button[data-action*="cart"], header button[data-action*="slideover-cart"]');
+            if (cartButton) {
+              console.log('Found cart button');
+              cartButton.style.cssText = 'order: 999 !important; margin-left: auto !important;';
               
-              // Find cart button and keep it on the right
-              const cartButton = document.querySelector('header button[data-action*="cart"], header button[data-action*="slideover-cart"]');
-              if (cartButton) {
-                cartButton.style.cssText = 'order: 999 !important; margin-left: auto !important;';
-                const cartContainer = cartButton.closest('.flex.items-center.gap-4, .flex.items-center');
-                if (cartContainer && cartContainer !== mainContainer) {
+              let cartContainer = cartButton.parentElement;
+              while (cartContainer && cartContainer !== mainContainer) {
+                if (cartContainer.classList.contains('flex') && cartContainer !== mainContainer) {
                   cartContainer.style.cssText = 'order: 999 !important; margin-left: auto !important;';
+                  break;
                 }
+                cartContainer = cartContainer.parentElement;
               }
-              
-              // Ensure logo/nav stays centered
-              const logoContainer = mainContainer.querySelector('.flex.items-center.flex-col.header-nav-container, .flex-centered');
-              if (logoContainer) {
-                logoContainer.style.cssText = 'order: 0 !important; flex: 0 1 auto !important; margin: 0 auto !important;';
-              }
+            }
+            
+            // Ensure logo stays centered (middle order)
+            const logoContainer = mainContainer.querySelector('.flex.items-center.flex-col.header-nav-container');
+            if (logoContainer) {
+              logoContainer.style.cssText = 'order: 0 !important; flex: 0 1 auto !important;';
             }
           }
 
-          // Run immediately and on various events
+          // Run immediately
           if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', customizeHeader);
           } else {
             customizeHeader();
           }
 
-          // Also run after delays to catch late-loading elements
+          // Run multiple times to catch late-loading elements
           setTimeout(customizeHeader, 100);
+          setTimeout(customizeHeader, 300);
           setTimeout(customizeHeader, 500);
           setTimeout(customizeHeader, 1000);
           setTimeout(customizeHeader, 2000);

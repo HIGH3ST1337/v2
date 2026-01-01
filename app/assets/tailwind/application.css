@@ -1865,7 +1865,15 @@ header button#wishlist-icon {
   visibility: hidden !important;
 }
 
-/* Hide search button - will be handled by JavaScript to avoid hiding account button */
+/* Hide search button - JavaScript will handle this more precisely */
+
+/* Hide any links/buttons with search text or search-related attributes */
+header nav a[href*="search"],
+header nav button[data-action*="search"]:not([data-action*="account"]),
+header nav [data-controller*="search"] {
+  display: none !important;
+  visibility: hidden !important;
+}
 
 /* Reposition the main header container */
 header nav .page-container > .flex.items-center,

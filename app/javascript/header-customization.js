@@ -1,126 +1,113 @@
-// Header customization - removes search and favorites, repositions account and cart
+// Header customization - removes search, repositions account to left of logo
 (function() {
   function customizeHeader() {
-    const header = document.querySelector('header nav')
-    if (!header) return
-
-    // Find all links and buttons in the header
-    const links = Array.from(header.querySelectorAll('a, button'))
+    console.log('Header customization running...');
     
-    links.forEach(link => {
-      const href = (link.href || '').toLowerCase()
-      const text = link.textContent.trim().toUpperCase()
-      const ariaLabel = (link.getAttribute('aria-label') || '').toLowerCase()
-      const className = (link.className || '').toLowerCase()
+    // Hide wishlist form
+    const wishlistForm = document.querySelector('header form[action="/account/wishlist"], header form[action*="/wishlist"]');
+    if (wishlistForm) {
+      wishlistForm.style.cssText = 'display: none !important; visibility: hidden !important;';
+    }
+    
+    // Hide wishlist button
+    const wishlistButton = document.querySelector('header #wishlist-icon');
+    if (wishlistButton) {
+      wishlistButton.style.cssText = 'display: none !important; visibility: hidden !important;';
+    }
+
+    // Find the main header container
+    const mainContainer = document.querySelector('header nav .page-container > .flex.items-center, header nav .page-container > .flex');
+    if (!mainContainer) {
+      console.log('Main container not found');
+      return;
+    }
+
+    // Hide search - find first child that contains SEARCH text but not account button
+    const firstChild = mainContainer.children[0];
+    if (firstChild) {
+      const firstChildText = firstChild.textContent.trim().toUpperCase();
+      const hasSearch = firstChildText.includes('SEARCH');
+      const hasAccount = firstChild.querySelector('button[data-action*="slideover-account"]') !== null;
       
-      // Hide search button - look for search in href, text, aria-label, or class
-      if (href.includes('search') || text.includes('SEARCH') || 
-          ariaLabel.includes('search') || className.includes('search')) {
-        link.style.display = 'none'
-        link.style.visibility = 'hidden'
-        link.setAttribute('hidden', 'hidden')
-        // Also hide parent container if it only contains search
-        if (link.parentElement) {
-          const siblings = Array.from(link.parentElement.children).filter(el => 
-            el.style.display !== 'none' && !el.hasAttribute('hidden')
-          )
-          if (siblings.length === 1 && siblings[0] === link) {
-            link.parentElement.style.display = 'none'
-          }
+      if (hasSearch && !hasAccount) {
+        firstChild.style.cssText = 'display: none !important; visibility: hidden !important;';
+        console.log('Hiding search container');
+      }
+    }
+    
+    // Hide any search buttons/links
+    const allElements = mainContainer.querySelectorAll('a, button');
+    allElements.forEach(el => {
+      const text = el.textContent.trim().toUpperCase();
+      const dataAction = el.getAttribute('data-action') || '';
+      
+      if (text.includes('SEARCH') || dataAction.includes('search')) {
+        if (!dataAction.includes('account')) {
+          el.style.cssText = 'display: none !important; visibility: hidden !important;';
         }
       }
+    });
+
+    // Setup flexbox layout
+    mainContainer.style.cssText = 'display: flex !important; justify-content: space-between !important; width: 100% !important; align-items: center !important;';
+    
+    // Find and position account button on the LEFT
+    const accountButton = document.querySelector('header button[data-action*="slideover-account"]');
+    if (accountButton) {
+      console.log('Found account button, moving to left');
+      accountButton.style.cssText = 'display: flex !important; visibility: visible !important; order: -1 !important; margin-right: auto !important;';
       
-      // Hide wishlist/favorite/heart button
-      if (href.includes('wishlist') || href.includes('favorite') || 
-          text.includes('WISHLIST') || text.includes('FAVORITE') || text.includes('HEART') ||
-          ariaLabel.includes('wishlist') || ariaLabel.includes('favorite') || 
-          ariaLabel.includes('heart') || className.includes('wishlist') || 
-          className.includes('favorite')) {
-        link.style.display = 'none'
-        link.style.visibility = 'hidden'
-        link.setAttribute('hidden', 'hidden')
-        if (link.parentElement) {
-          const siblings = Array.from(link.parentElement.children).filter(el => 
-            el.style.display !== 'none' && !el.hasAttribute('hidden')
-          )
-          if (siblings.length === 1 && siblings[0] === link) {
-            link.parentElement.style.display = 'none'
-          }
+      // Find account button's parent container and move it to the left
+      let accountContainer = accountButton.parentElement;
+      while (accountContainer && accountContainer !== mainContainer) {
+        if (accountContainer.classList.contains('flex') && accountContainer !== mainContainer) {
+          accountContainer.style.cssText = 'display: flex !important; visibility: visible !important; order: -1 !important; margin-right: auto !important;';
+          console.log('Moved account container to left');
+          break;
         }
+        accountContainer = accountContainer.parentElement;
       }
-    })
-
-    // Find account and cart links
-    const accountLink = links.find(link => {
-      const href = (link.href || '').toLowerCase()
-      const ariaLabel = (link.getAttribute('aria-label') || '').toLowerCase()
-      const text = link.textContent.trim().toLowerCase()
-      return href.includes('/account') || href.includes('/user') || 
-             href.includes('/login') || ariaLabel.includes('account') || 
-             ariaLabel.includes('user') || ariaLabel.includes('login') ||
-             text.includes('account') || text.includes('login')
-    })
-
-    const cartLink = links.find(link => {
-      const href = (link.href || '').toLowerCase()
-      const ariaLabel = (link.getAttribute('aria-label') || '').toLowerCase()
-      const text = link.textContent.trim().toLowerCase()
-      return href.includes('/cart') || href.includes('/bag') || 
-             ariaLabel.includes('cart') || ariaLabel.includes('bag') ||
-             text.includes('cart') || text.includes('bag')
-    })
-
-    // Reposition account and cart
-    if (accountLink && cartLink) {
-      // Find their common container (flex container)
-      let container = accountLink.parentElement
+    }
+    
+    // Find and position cart button on the RIGHT
+    const cartButton = document.querySelector('header button[data-action*="cart"], header button[data-action*="slideover-cart"]');
+    if (cartButton) {
+      cartButton.style.cssText = 'order: 999 !important; margin-left: auto !important;';
       
-      // Walk up the tree to find a flex container that contains both
-      while (container && container !== document.body) {
-        if (container.contains(cartLink)) {
-          break
+      let cartContainer = cartButton.parentElement;
+      while (cartContainer && cartContainer !== mainContainer) {
+        if (cartContainer.classList.contains('flex') && cartContainer !== mainContainer) {
+          cartContainer.style.cssText = 'order: 999 !important; margin-left: auto !important;';
+          break;
         }
-        container = container.parentElement
+        cartContainer = cartContainer.parentElement;
       }
-      
-      // If we didn't find a common container, look for flex containers
-      if (!container || container === document.body) {
-        const flexContainers = header.querySelectorAll('.flex, [class*="flex"], .page-container > div')
-        container = Array.from(flexContainers).find(el => 
-          el.contains(accountLink) && el.contains(cartLink)
-        )
-      }
-
-      if (container) {
-        container.style.display = 'flex'
-        container.style.justifyContent = 'space-between'
-        container.style.width = '100%'
-        container.style.alignItems = 'center'
-        
-        // Position account on left
-        accountLink.style.order = '-1'
-        accountLink.style.marginRight = 'auto'
-        accountLink.style.cssFloat = 'left'
-        
-        // Position cart on right
-        cartLink.style.order = '999'
-        cartLink.style.marginLeft = 'auto'
-        cartLink.style.cssFloat = 'right'
-      }
+    }
+    
+    // Ensure logo stays centered
+    const logoContainer = mainContainer.querySelector('.flex.items-center.flex-col.header-nav-container');
+    if (logoContainer) {
+      logoContainer.style.cssText = 'order: 0 !important; flex: 0 1 auto !important;';
     }
   }
 
-  // Run on page load
+  // Run immediately
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', customizeHeader)
+    document.addEventListener('DOMContentLoaded', customizeHeader);
   } else {
-    customizeHeader()
+    customizeHeader();
   }
 
-  // Also run after Turbo navigations
+  // Run multiple times to catch late-loading elements
+  setTimeout(customizeHeader, 100);
+  setTimeout(customizeHeader, 300);
+  setTimeout(customizeHeader, 500);
+  setTimeout(customizeHeader, 1000);
+  setTimeout(customizeHeader, 2000);
+
+  // Turbo events
   if (typeof Turbo !== 'undefined') {
-    document.addEventListener('turbo:load', customizeHeader)
-    document.addEventListener('turbo:frame-load', customizeHeader)
+    document.addEventListener('turbo:load', customizeHeader);
+    document.addEventListener('turbo:frame-load', customizeHeader);
   }
 })()
-
