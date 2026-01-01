@@ -1856,40 +1856,26 @@ body:has(.currency-and-locale-modal:not(.hidden)) .page-contents {
    Remove search and heart buttons, reposition account and cart icons
    ============================================ */
 
-/* Hide search button - very broad selectors */
-header nav a[href*="search" i],
-header nav a[href*="/search" i],
-header nav button[data-action*="search" i],
-header nav [data-controller*="search" i],
-header nav a:first-child:not([href*="/account"]):not([href*="/cart"]):not([href*="/wishlist"]),
-header nav .flex > a:first-child,
-header nav .flex > div:first-child > a,
-/* Target by text content pattern - if href contains search */
-header nav a[href*="search"] {
+/* Hide wishlist/favorite/heart button - target the form containing it */
+header form[action="/account/wishlist"],
+header form[action*="/wishlist"],
+header #wishlist-icon,
+header button#wishlist-icon {
   display: none !important;
   visibility: hidden !important;
 }
 
-/* Hide wishlist/favorite/heart button - target middle button in icon group */
-header nav a[href*="wishlist" i],
-header nav a[href*="/wishlist" i],
-header nav a[href*="favorites" i],
-header nav a[href*="/favorites" i],
-header nav button[data-action*="wishlist" i],
-header nav button[data-action*="favorite" i],
-header nav [data-controller*="wishlist" i],
-header nav [data-controller*="favorite" i],
-header nav .flex > a:nth-child(2),
-header nav .flex > div:nth-child(2) > a {
+/* Hide search button - target by data-action or controller */
+header button[data-action*="search"],
+header [data-controller*="search"],
+header button[data-toggle*="search"] {
   display: none !important;
   visibility: hidden !important;
 }
 
-/* Reposition header actions container - make it space-between */
-header nav .page-container > .flex,
-header nav .flex.items-center,
-header nav .flex,
-header nav > div > div.flex {
+/* Reposition the container that holds account and cart icons */
+header .flex.items-center.gap-4.flex-1.justify-end,
+header nav .flex.items-center.gap-4.flex-1.justify-end {
   display: flex !important;
   justify-content: space-between !important;
   width: 100% !important;
@@ -1897,24 +1883,17 @@ header nav > div > div.flex {
 }
 
 /* Position account icon on the left */
-header nav a[href*="/account" i],
-header nav a[href*="/user" i],
-header nav a[href*="account" i],
-header nav button[data-action*="account" i],
-header nav [data-controller*="account" i],
-header nav .flex > a[href*="/account"],
-header nav .flex > a[href*="/user"] {
+header button[data-action*="slideover-account"],
+header button[data-action*="account"],
+header [data-controller*="account"] button {
   order: -1 !important;
   margin-right: auto !important;
 }
 
 /* Position cart icon on the right */
-header nav a[href*="/cart" i],
-header nav a[href*="cart" i],
-header nav button[data-action*="cart" i],
-header nav [data-controller*="cart" i],
-header nav .flex > a[href*="/cart"],
-header nav .flex > a:last-child:not([href*="/account"]) {
+header button[data-action*="cart"],
+header button[data-action*="slideover-cart"],
+header [data-controller*="cart"] button {
   order: 999 !important;
   margin-left: auto !important;
 }
