@@ -69,12 +69,19 @@
       // Find account button's parent container and position it on the left
       let accountContainer = accountButton.closest('.flex.items-center.gap-4');
       if (!accountContainer) {
-        accountContainer = accountButton.parentElement;
+        accountContainer = accountButton.closest('.hidden.lg\\:flex') || accountButton.parentElement;
+      }
+      
+      // Also check for hidden lg:flex container
+      if (!accountContainer || accountContainer.classList.contains('hidden')) {
+        accountContainer = accountButton.closest('div.hidden.lg\\:flex') || accountButton.parentElement;
       }
       
       if (accountContainer && accountContainer !== mainContainer) {
+        // Override hidden class to show on mobile
+        accountContainer.classList.remove('hidden');
         accountContainer.style.cssText = 'display: flex !important; visibility: visible !important; position: absolute !important; left: 0 !important; z-index: 10 !important;';
-        console.log('Moved account container to left');
+        console.log('Moved account container to left and made visible on mobile');
       }
     }
     

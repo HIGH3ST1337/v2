@@ -1890,7 +1890,7 @@ header nav .page-container > .flex {
   position: relative !important;
 }
 
-/* Show and position account button on the LEFT side */
+/* Show and position account button on the LEFT side - visible on all screen sizes */
 header button[data-action*="slideover-account"],
 header button[data-action*="account"]:not([data-action*="search"]):not([data-action*="wishlist"]) {
   display: flex !important;
@@ -1900,11 +1900,33 @@ header button[data-action*="account"]:not([data-action*="search"]):not([data-act
   left: 0 !important;
 }
 
-/* Ensure account button container is visible and positioned on the left */
+/* Ensure account button container is visible on mobile and desktop */
 header .flex.items-center.gap-4.flex-1.justify-end button[data-action*="slideover-account"],
-header .flex.items-center.gap-4.flex-1 button[data-action*="slideover-account"] {
+header .flex.items-center.gap-4.flex-1 button[data-action*="slideover-account"],
+header button[data-action*="slideover-account"] {
   display: flex !important;
   visibility: visible !important;
+}
+
+/* Override hidden class on mobile for account button container - show on all screen sizes */
+header .flex.items-center.gap-4.flex-1.justify-end {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+/* Force account button to show on mobile - override Tailwind's hidden lg:flex */
+@media (max-width: 1023px) {
+  header div[class*="hidden"][class*="lg"] button[data-action*="slideover-account"],
+  header div.hidden button[data-action*="slideover-account"] {
+    display: flex !important;
+    visibility: visible !important;
+  }
+  
+  header div[class*="hidden"][class*="lg"]:has(button[data-action*="slideover-account"]),
+  header div.hidden:has(button[data-action*="slideover-account"]) {
+    display: flex !important;
+    visibility: visible !important;
+  }
 }
 
 /* Move account button container to the left - JavaScript will handle this */
