@@ -1928,4 +1928,5 @@ header nav .flex.items-center.flex-col {
   position: absolute !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
+  padding-top: 1rem !important;
 }
