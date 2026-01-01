@@ -1887,36 +1887,45 @@ header nav .page-container > .flex {
   justify-content: space-between !important;
   width: 100% !important;
   align-items: center !important;
+  position: relative !important;
 }
 
-/* Show and position account button on the left */
+/* Show and position account button on the LEFT side */
 header button[data-action*="slideover-account"],
 header button[data-action*="account"]:not([data-action*="search"]):not([data-action*="wishlist"]) {
   display: flex !important;
   visibility: visible !important;
   order: -1 !important;
-  margin-right: auto !important;
+  position: absolute !important;
+  left: 0 !important;
 }
 
-/* Ensure account button container is visible and positioned */
+/* Ensure account button container is visible and positioned on the left */
 header .flex.items-center.gap-4.flex-1.justify-end button[data-action*="slideover-account"],
 header .flex.items-center.gap-4.flex-1 button[data-action*="slideover-account"] {
   display: flex !important;
   visibility: visible !important;
 }
 
-/* Keep cart icon on the right */
+/* Move account button container to the left - JavaScript will handle this */
+
+/* Keep cart icon on the RIGHT side */
 header button[data-action*="cart"],
 header button[data-action*="slideover-cart"],
 header [data-controller*="cart"] button {
   order: 999 !important;
-  margin-left: auto !important;
+  position: absolute !important;
+  right: 0 !important;
 }
 
-/* Ensure logo/nav stays centered */
+/* Center logo/nav container */
 header nav .flex.items-center.flex-col.header-nav-container,
-header nav .flex-centered {
+header nav .flex-centered,
+header nav .flex.items-center.flex-col {
   order: 0 !important;
   flex: 0 1 auto !important;
   margin: 0 auto !important;
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
 }

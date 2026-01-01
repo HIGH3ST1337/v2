@@ -73,49 +73,51 @@
               }
             });
 
-            // Setup flexbox layout
-            mainContainer.style.cssText = 'display: flex !important; justify-content: space-between !important; width: 100% !important; align-items: center !important;';
+            // Setup flexbox layout with relative positioning
+            mainContainer.style.cssText = 'display: flex !important; justify-content: space-between !important; width: 100% !important; align-items: center !important; position: relative !important;';
             
-            // Find and position account button on the LEFT
+            // Find and position account button on the LEFT (absolute positioning)
             const accountButton = document.querySelector('header button[data-action*="slideover-account"]');
             if (accountButton) {
-              console.log('Found account button');
-              accountButton.style.cssText = 'display: flex !important; visibility: visible !important; order: -1 !important; margin-right: auto !important;';
+              console.log('Found account button, moving to left');
+              accountButton.style.cssText = 'display: flex !important; visibility: visible !important;';
               
-              // Find account button's parent container and move it to the left
-              let accountContainer = accountButton.parentElement;
-              while (accountContainer && accountContainer !== mainContainer) {
-                if (accountContainer.classList.contains('flex') && accountContainer !== mainContainer) {
-                  accountContainer.style.cssText = 'display: flex !important; visibility: visible !important; order: -1 !important; margin-right: auto !important;';
-                  console.log('Moved account container to left');
-                  break;
-                }
-                accountContainer = accountContainer.parentElement;
+              // Find account button's parent container and position it on the left
+              let accountContainer = accountButton.closest('.flex.items-center.gap-4');
+              if (!accountContainer) {
+                accountContainer = accountButton.parentElement;
+              }
+              
+              if (accountContainer && accountContainer !== mainContainer) {
+                accountContainer.style.cssText = 'display: flex !important; visibility: visible !important; position: absolute !important; left: 0 !important; z-index: 10 !important;';
+                console.log('Moved account container to left');
               }
             } else {
               console.log('Account button not found');
             }
             
-            // Find and position cart button on the RIGHT
+            // Find and position cart button on the RIGHT (absolute positioning)
             const cartButton = document.querySelector('header button[data-action*="cart"], header button[data-action*="slideover-cart"]');
             if (cartButton) {
-              console.log('Found cart button');
-              cartButton.style.cssText = 'order: 999 !important; margin-left: auto !important;';
+              console.log('Found cart button, moving to right');
+              cartButton.style.cssText = 'display: flex !important; visibility: visible !important;';
               
-              let cartContainer = cartButton.parentElement;
-              while (cartContainer && cartContainer !== mainContainer) {
-                if (cartContainer.classList.contains('flex') && cartContainer !== mainContainer) {
-                  cartContainer.style.cssText = 'order: 999 !important; margin-left: auto !important;';
-                  break;
-                }
-                cartContainer = cartContainer.parentElement;
+              let cartContainer = cartButton.closest('.flex.items-center.gap-4');
+              if (!cartContainer) {
+                cartContainer = cartButton.parentElement;
+              }
+              
+              if (cartContainer && cartContainer !== mainContainer) {
+                cartContainer.style.cssText = 'position: absolute !important; right: 0 !important; z-index: 10 !important;';
+                console.log('Moved cart container to right');
               }
             }
             
-            // Ensure logo stays centered (middle order)
-            const logoContainer = mainContainer.querySelector('.flex.items-center.flex-col.header-nav-container');
+            // Center logo/nav container (absolute positioning with transform)
+            const logoContainer = mainContainer.querySelector('.flex.items-center.flex-col.header-nav-container, .flex.items-center.flex-col');
             if (logoContainer) {
-              logoContainer.style.cssText = 'order: 0 !important; flex: 0 1 auto !important;';
+              logoContainer.style.cssText = 'position: absolute !important; left: 50% !important; transform: translateX(-50%) !important; z-index: 5 !important;';
+              console.log('Centered logo container');
             }
           }
 
